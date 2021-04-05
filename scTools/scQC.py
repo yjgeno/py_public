@@ -63,7 +63,12 @@ def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
     
     return adata
     
-# example: 
-# pdmc = sc.read_10x_mtx('./hg19/', var_names='gene_symbols', cache=True) 
-# scQC(pdmc, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = True)
+#example: 
+#import urllib.request
+#code = 'https://raw.githubusercontent.com/yjgeno/py_public/main/scTools/scQC.py'
+#data = urllib.request.urlopen(code).read()
+#exec(data)
+
+#pdmc = sc.read_10x_mtx('./hg19/', var_names='gene_symbols', cache=True) 
+#scQC(pdmc, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = True)
 
