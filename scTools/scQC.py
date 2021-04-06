@@ -16,8 +16,8 @@ def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
         #plt.plot(X, predict_mean_ci_upp, 'maroon', lw=1)
         plt.xticks(fontsize=8)
         plt.yticks(fontsize=8)
-        plt.xlabel('n_Genes', fontsize = 8) #Total Reads/cell
-        plt.ylabel('n_Counts', fontsize = 8)
+        plt.xlabel('n_Counts', fontsize = 8) #Total Reads/cell
+        plt.ylabel('n_Genes', fontsize = 8)
         plt.show()
 
     orig_len = len (adata.obs)
@@ -27,7 +27,7 @@ def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
     
     genelst = [var.upper() for var in adata.var_names]
     mtGenes = [g.startswith('MT-') for g in genelst]
-    nGenes = (adata.X != 0).sum(axis=1).A1 # of expressed genes/cell
+    nGenes = (adata.X != 0).sum(axis=1).A1 # n expressed genes/cell
     
     model = sm.OLS(nGenes, libSize) # (y, X)
     results = model.fit()
