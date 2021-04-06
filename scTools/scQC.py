@@ -16,8 +16,8 @@ def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
         #plt.plot(X, predict_mean_ci_upp, 'maroon', lw=1)
         plt.xticks(fontsize=8)
         plt.yticks(fontsize=8)
-        plt.xlabel('Total Reads/cell', fontsize = 8)
-        plt.ylabel('Gene Counts', fontsize = 8)
+        plt.xlabel('n_Genes', fontsize = 8) #Total Reads/cell
+        plt.ylabel('n_Counts', fontsize = 8)
         plt.show()
 
     orig_len = len (adata.obs)
