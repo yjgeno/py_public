@@ -1,0 +1,12 @@
+#Alevin
+salmon alevin -l ISR -i gencode.vM24.annotation.expanded.sidx \
+-1 ./geo_submission_Chapkin_Feb2021/Raw_H/*_L002_R1_001.fastq.gz \
+-2 ./geo_submission_Chapkin_Feb2021/Raw_H/*_L002_R2_001.fastq.gz \
+-o alevin_out_H_processed_1 -p 36 --tgMap gencode.vM24.annotation.expanded.tx2gene.tsv \
+--chromiumV3 --dumpFeatures --expectCells 6786 --whitelist velocity/processed_data/KO_barcodes_1.txt
+
+salmon alevin -l ISR -i gencode.vM24.annotation.expanded.sidx \
+-1 ./geo_submission_Chapkin_Feb2021/Raw_L/*_L002_R1_001.fastq.gz \
+-2 ./geo_submission_Chapkin_Feb2021/Raw_L/*_L002_R2_001.fastq.gz \
+-o alevin_out_L_processed_1 -p 36 --tgMap gencode.vM24.annotation.expanded.tx2gene.tsv \
+--chromiumV3 --dumpFeatures --expectCells 12227 --whitelist velocity/processed_data/WT_barcodes_1.txt
