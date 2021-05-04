@@ -20,7 +20,7 @@ for ada in [ada1, ada2]:
 	sc.tl.pca(ada, svd_solver='arpack')
 	sc.pp.neighbors(ada, n_neighbors=4, n_pcs=20)
 	sc.tl.draw_graph(ada, layout='fa', random_state=1) # add fa embedding
-	sc.tl.paga(ada, groups='celltype')
+	sc.tl.paga(ada, groups='celltype') # run PAGA, add connectivities
 	
 	sc.pl.paga_compare(
     ada2, color='celltype', basis='X_draw_graph_fa', threshold=0.03, title='', right_margin=0.2, size=10, edge_width_scale=0.5,
@@ -31,6 +31,7 @@ for ada in [ada1, ada2]:
     ada2, color='celltype', basis='X_tsne', threshold=0.03, title='', right_margin=0.2, size=10, edge_width_scale=0.5,
     legend_fontsize=12, fontsize=12, frameon=False, edges=True, save='ada{}_tsne.png'.format(i))
 	i += 1
-  
-  
+
+#save PAGA positions	
+#np.savetxt("./ada1_tsne_PAGA.csv", ada1.uns['paga']['pos'], delimiter=",")  
   
