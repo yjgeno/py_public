@@ -71,13 +71,15 @@ ada_genes_for_test = np.char.upper(ada_genes_for_test) #interested genes also in
 ada1 = ada1_v[:, ada1_v.var_names.isin (ada_genes_for_test)]
 ada2 = ada2_v[:, ada2_v.var_names.isin (ada_genes_for_test)]
 
+kwargs = dict(linewidth=1.5, color_map='coolwarm', figsize= (6, 5), colorbar=False, size=64, 
+               dpi=200, legend_fontsize=12, fontsize=14, smooth=30)
+
 for g in ada_genes_for_test:
     #xmax = max(ada2[:, ada2.var_names.isin ([g])].layers['spliced'].tolist())[0]
     #ymax = max(ada2[:, ada2.var_names.isin ([g])].layers['unspliced'].tolist())[0]
     for ada in [ada1, ada2]:
-        scv.pl.scatter(ada, g, color='velocity', color_map='seismic', figsize= (6, 5), colorbar=False,
-                       xlim = (0, math.log10(xmax)), ylim = (0, math.log10(ymax)), legend_fontsize=14, fontsize=14,
-                       size=8, dpi=200, save='{}_{}_dynamics.png'.format(g, namestr(ada, globals())[0]))
+        scv.pl.scatter(ada, g, color='velocity', **kwargs,
+                       xlim = (0, math.log10(xmax)), ylim = (0, math.log10(ymax)), save='{}_{}_dynamics.png'.format(g, namestr(ada, globals())[0]))
         
         
         
