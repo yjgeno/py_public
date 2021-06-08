@@ -70,7 +70,7 @@ def Xct_init(ada, CellA, CellB, DB, verbose = False):
 
 def Xct_pmt(ada, CellA, CellB, Ref, verbose = False):
     result = {}
-    AB = ada[ada.obs['ident'].isin([CellA, CellB]), :]
+    AB = ada[ada.obs['ident'].isin([CellA, CellB]), :].copy()
     
     #np.random.seed(42)
     labels_pmt = np.random.permutation(AB.obs['ident'])
