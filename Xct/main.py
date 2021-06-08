@@ -84,13 +84,11 @@ def XctSelection(dict_AB, IsPmt = False, verbose = False): # if input is permuta
 
 def XctScore1(LRs_Xct):
     LRs_Xct['LR_score'] = LRs_Xct['l_exp'] * LRs_Xct['rec_exp']
-    
     return LRs_Xct['LR_score'].to_numpy(dtype=float)
 
 
 def XctScore2(LRs_Xct):
-    LRs_Xct['LR_score2'] = (LRs_Xct['l_exp']**2 + LRs_Xct['l_var']) * (LRs_Xct['rec_exp']**2 + LRs_Xct['rec_var'])
-    
+    LRs_Xct['LR_score2'] = (LRs_Xct['l_exp']**2 + LRs_Xct['l_var']) * (LRs_Xct['rec_exp']**2 + LRs_Xct['rec_var'])  
     return LRs_Xct['LR_score2'].to_numpy(dtype=float)
 
 
@@ -111,8 +109,7 @@ def Xct_PermuTest(orig_score, scores, p = 0.05):
         count = sum(orig_score[i] > value for value in dist)
         pval = 1- count/len(dist)
         pvals.append(pval)
-        counts.append(count)
-        
+        counts.append(count)      
         if pval < p:
             enriched_i.append(i)
     
