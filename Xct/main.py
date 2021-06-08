@@ -92,11 +92,11 @@ def XctScore2(LRs_Xct):
     return LRs_Xct['LR_score2'].to_numpy(dtype=float)
 
 
-def XctScores(CellA, CellB, LRs, func, n=100): #func: score method, permute n times
+def XctScores(CellA, CellB, LRs, LRs_Selected, func, n=100): #func: score method, permute n times
     scores = []
     for _ in range(n):
-        p = XctSelection(XctInfo(CellA, CellB, permute = True), IsPmt = True, verbose = False)
-        scores.append(func(p.loc[list(set(p.index) & set(LRs.index))])) #filter
+        p = XctSelection(XctInfo(ada, CellA, CellB, LRs, permute = True), IsPmt = True, verbose = False)
+        scores.append(func(p.loc[list(set(p.index) & set(LRs_Selected.index))])) #filter
     assert all(len(i) == len(orig_score) for i in scores) #check if equal len of selected LR pairs
     return np.array(scores).T  #transpose for further looping
 
@@ -116,8 +116,8 @@ def Xct_PermuTest(orig_score, scores, p = 0.05):
     return enriched_i, pvals, counts
 
 
-def vis(orig_score, scores, i, LRs, density = False): #index i in LRs_Selected, LRs = LRs_Selected
-    print('LR pair: {} - {}'.format(LRs.iloc[i]['ligand'], LRs.iloc[i]['rec_A']))
+def vis(orig_score, scores, i, LRs_Selected, density = False): #index i in LRs_Selected, LRs = LRs_Selected
+    print('LR pair: {} - {}'.format(LRs_Selected.iloc[i]['ligand'], LRs_Selected.iloc[i]['rec_A']))
     plt.hist(scores[i], density = density)
     plt.axvline(x = orig_score[i], color = 'r')
     plt.show()
