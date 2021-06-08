@@ -170,6 +170,9 @@ def vis(orig_Scores, Scores, i, LRs, density = False): #index i in LRs_Selected
 
     
 #test
+#CellA = 'Inflam. FIB'
+#CellB = 'Inflam. DC'
+#LRs = Xct_DB()
 #LRs_ref = Xct_init(ada, CellA, CellB, DB = LRs, verbose = True)
 #orig_Scores = Xct_Score(df = LRs_ref)
 #np.random.seed(1)
