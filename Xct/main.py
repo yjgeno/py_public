@@ -9,7 +9,7 @@ sc.settings.verbosity = 0
 # for Cell A, B
 
 def Xct_DB(specis = 'Human'):
-    if specis = 'mouse':
+    if specis == 'mouse':
         LR = pd.read_csv('https://raw.githubusercontent.com/yjgeno/Ligand-Receptor-Pairs/master/Mouse/Mouse-2020-Jin-LR-pairs.csv')
     else:
         LR = pd.read_csv('https://raw.githubusercontent.com/yjgeno/Ligand-Receptor-Pairs/master/Human/Human-2020-Jin-LR-pairs.csv')
