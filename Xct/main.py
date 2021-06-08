@@ -21,7 +21,7 @@ def Xct_DB(specis = 'Human'):
     return LRs
 
 
-def XctInfo(ada, CellA, CellB, permute = False, verbose = False):
+def XctInfo(ada, CellA, CellB, LRs, permute = False, verbose = False):
     result = {}
     AB = ada[ada.obs['ident'].isin([CellA, CellB]), :]
     
