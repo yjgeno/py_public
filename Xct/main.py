@@ -1,16 +1,25 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import scanpy as sc
 from anndata import AnnData
 
+sc.settings.verbosity = 0
 # adata object built
 # for Cell A, B
+
+LR = pd.read_csv('https://raw.githubusercontent.com/yjgeno/Ligand-Receptor-Pairs/master/Human/Human-2020-Jin-LR-pairs.csv')
+receptors = LR['receptor'].str.split('_', expand=True)
+receptors.columns = ['rec_A', 'rec_B', 'rec_C']
+LRs = pd.concat([LR[['pathway_name', 'ligand']], receptors], axis=1)
+
 
 def XctInfo(CellA, CellB, permute = False, verbose = False):
     result = {}
     AB = ada[ada.obs['ident'].isin([CellA, CellB]), :]
     
     if permute:
+        #np.random.seed(42)
         labels_pmt = np.random.permutation(AB.obs['ident'])
         AB.obs['ident'] = labels_pmt
         if verbose:
@@ -47,60 +56,80 @@ def XctInfo(CellA, CellB, permute = False, verbose = False):
         result['{}_var'.format(rec)] = r_var
     
     return result
-  
-  
-def XctSelection(dict_AB, verbose = False):
+ 
+    
+def XctSelection(dict_AB, IsPmt = False, verbose = False): # if input is permutated dataset
     LRs_Xct = LRs.copy()  
     LRs_Xct = pd.concat([LRs_Xct, pd.DataFrame.from_dict(dict_AB)], axis=1)
     
     mask1 = np.invert(LRs_Xct[['l_exp', 'rec_A_exp']].isna().any(axis=1)) # remove NA
-    mask2 = (LRs_Xct['l_exp'] > 0) & (LRs_Xct['rec_A_exp'] > 0) # remove 0
-    LRs_Xct = LRs_Xct[mask1 & mask2]
+    LRs_Xct = LRs_Xct[mask1]
+    if not IsPmt:
+        mask2 = (LRs_Xct['l_exp'] > 0) & (LRs_Xct['rec_A_exp'] > 0) # remove 0 for original LR
+        LRs_Xct = LRs_Xct[mask2]
     if verbose:
         print('Selected {} LR pairs'.format(LRs_Xct.shape[0]))
     
-    LRs_Xct['rec_exp'] = LRs_Xct[['rec_A_exp', 'rec_B_exp', 'rec_C_exp']].max(axis=1)
-    LRs_Xct['rec_var'] = LRs_Xct[['rec_A_var', 'rec_B_var', 'rec_C_var']].max(axis=1)
-    
-    return LRs_Xct  
-  
-  
+    LRs_Xct['rec_exp'] = LRs_Xct[['rec_A_exp', 'rec_B_exp', 'rec_C_exp']].max(axis=1) #mean for R
+    LRs_Xct['rec_var'] = LRs_Xct[['rec_A_var', 'rec_B_var', 'rec_C_var']].max(axis=1) #var for R
+     
+    return LRs_Xct
+
+
 def XctScore1(LRs_Xct):
     LRs_Xct['LR_score'] = LRs_Xct['l_exp'] * LRs_Xct['rec_exp']
     
     return LRs_Xct['LR_score'].to_numpy(dtype=float)
 
 
+def XctScore2(LRs_Xct):
+    LRs_Xct['LR_score2'] = (LRs_Xct['l_exp']**2 + LRs_Xct['l_var']) * (LRs_Xct['rec_exp']**2 + LRs_Xct['rec_var'])
+    
+    return LRs_Xct['LR_score2'].to_numpy(dtype=float)
+
+
 def XctScores(CellA, CellB, LRs, func, n=100): #func: score method, permute n times
     scores = []
     for _ in range(n):
-        permutated = XctInfo(CellA, CellB, permute = True)
-        scores.append(func(XctSelection(permutated).loc[LRs.index])) #filter
-  
+        p = XctSelection(XctInfo(CellA, CellB, permute = True), IsPmt = True, verbose = False)
+        scores.append(func(p.loc[list(set(p.index) & set(LRs.index))])) #filter
     assert all(len(i) == len(orig_score) for i in scores) #check if equal len of selected LR pairs
     return np.array(scores).T  #transpose for further looping
 
-  
-def Xct_PermuTest(scores, p = 0.05):
+
+def Xct_PermuTest(orig_score, scores, p = 0.05):
     enriched_i = []
     pvals = []
     counts = []
     for i, dist in enumerate(scores):
         count = sum(orig_score[i] > value for value in dist)
         pval = 1- count/len(dist)
+        pvals.append(pval)
+        counts.append(count)
+        
         if pval < p:
             enriched_i.append(i)
-            pvals.append(pval)
-            counts.append(count)
     
     return enriched_i, pvals, counts
-  
-  
-LRs_Selected = XctSelection(XctInfo(CellA, CellB, permute = False), verbose = True) #selected original LR pairs
-orig_score = XctScore1(LRs_Selected)
+
+
+def vis(orig_score, scores, i, LRs = LRs_Selected, density = False): #index i in LRs_Selected
+    print('LR pair: {} - {}'.format(LRs.iloc[i]['ligand'], LRs.iloc[i]['rec_A']))
+    plt.hist(scores[i], density = density)
+    plt.axvline(x = orig_score[i], color = 'r')
+    plt.show()
+    
+LRs_Selected = XctSelection(XctInfo(CellA, CellB, permute = False), IsPmt = False, verbose = True) #selected original LR pairs
+orig_score = XctScore1(LRs_Selected)  
 scores = XctScores(CellA, CellB, LRs_Selected, XctScore1, n=10)
-enriched, pvals, counts = Xct_PermuTest(scores)
-LRs_Enriched = LRs_Selected.iloc[enriched, :]
+enriched, pvals, counts = Xct_PermuTest(orig_score, scores)
+LRs_Enriched = LRs_Selected.iloc[enriched, :] #enriched pairs
+
+vis(orig_score, scores, 5, density = False)
+
+
+
+
 
 
 
