@@ -116,7 +116,7 @@ def Xct_PermuTest(orig_score, scores, p = 0.05):
     return enriched_i, pvals, counts
 
 
-def vis(orig_score, scores, i, LRs = LRs_Selected, density = False): #index i in LRs_Selected
+def vis(orig_score, scores, i, LRs, density = False): #index i in LRs_Selected, LRs = LRs_Selected
     print('LR pair: {} - {}'.format(LRs.iloc[i]['ligand'], LRs.iloc[i]['rec_A']))
     plt.hist(scores[i], density = density)
     plt.axvline(x = orig_score[i], color = 'r')
