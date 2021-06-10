@@ -5,21 +5,7 @@ import statsmodels.api as sm
 from statsmodels.stats.outliers_influence import summary_table
 
 def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
-    
-    def plotQC(X, y, y_fit, y_fit_low, y_fit_upp):  
-        fig = plt.figure(figsize=(3,3))
-        plt.plot(X, y, 'o', markersize=2)
-        plt.plot(X, y_fit, '-', lw=2)
-        plt.plot(X, y_fit_low, 'r--', lw=1)
-        plt.plot(X, y_fit_upp, 'r--', lw=1)
-        #plt.plot(X, predict_mean_ci_low, 'maroon', lw=1)
-        #plt.plot(X, predict_mean_ci_upp, 'maroon', lw=1)
-        plt.xticks(fontsize=8)
-        plt.yticks(fontsize=8)
-        plt.xlabel('n_Counts', fontsize = 8) #Total Reads/cell
-        plt.ylabel('n_Genes', fontsize = 8)
-        plt.show()
-
+   
     orig_len = len (adata.obs)
     libSize = np.ravel(adata.X.sum(axis=1))
     adata = adata[libSize >= minLSize, :]
@@ -35,6 +21,20 @@ def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
     _, data, _ = summary_table(results, alpha = a)
     fit_values = data[:, 2]
     predict_ci_low, predict_ci_upp = data[:, 6:8].T
+    
+    def plotQC(X, y, y_fit, y_fit_low, y_fit_upp):  
+        fig = plt.figure(figsize=(5,5))
+        plt.plot(X, y, 'o', markersize=2)
+        plt.plot(X, y_fit, '-', lw=2)
+        plt.plot(X, y_fit_low, 'r--', lw=1)
+        plt.plot(X, y_fit_upp, 'r--', lw=1)
+        #plt.plot(X, predict_mean_ci_low, 'maroon', lw=1)
+        #plt.plot(X, predict_mean_ci_upp, 'maroon', lw=1)
+        plt.xticks(fontsize=8)
+        plt.yticks(fontsize=8)
+        plt.xlabel('n_Counts', fontsize = 8) #Total Reads/cell
+        plt.ylabel('{}'.format('n_Genes' if len(mtGenes) > 0 else 'n_mtGenes'), fontsize = 8)
+        plt.show()
 
     if len(mtGenes) > 0:
         mtCounts = np.ravel(adata.X[:, mtGenes].sum(axis=1)) # total reads of mt-genes/cell
