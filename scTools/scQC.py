@@ -21,13 +21,13 @@ def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
         plt.show()
 
     orig_len = len (adata.obs)
-    libSize = adata.X.sum(axis=1).A1
+    libSize = np.ravel(adata.X.sum(axis=1))
     adata = adata[libSize >= minLSize, :]
-    libSize = adata.X.sum(axis=1).A1 # total reads/cell
+    libSize = np.ravel(adata.X.sum(axis=1)) # total reads/cell
     
     genelst = [var.upper() for var in adata.var_names]
     mtGenes = [g.startswith('MT-') for g in genelst]
-    nGenes = (adata.X != 0).sum(axis=1).A1 # n expressed genes/cell
+    nGenes = np.ravel((adata.X != 0).sum(axis=1)) # n expressed genes/cell
     
     model = sm.OLS(nGenes, libSize) # (y, X)
     results = model.fit()
@@ -37,7 +37,7 @@ def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
     predict_ci_low, predict_ci_upp = data[:, 6:8].T
 
     if len(mtGenes) > 0:
-        mtCounts = adata.X[:, mtGenes].sum(axis=1).A1 # total reads of mt-genes/cell
+        mtCounts = np.ravel(adata.X[:, mtGenes].sum(axis=1)) # total reads of mt-genes/cell
         mtProportion = mtCounts/libSize
         mt_model = sm.OLS(mtCounts, libSize) # (y, X)
         mt_results = mt_model.fit()
@@ -67,6 +67,6 @@ def scQC(adata, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = False):
 #code = urllib.request.urlopen('https://raw.githubusercontent.com/yjgeno/py_public/main/scTools/scQC.py').read()
 #exec(code)
 
-#pdmc = sc.read_10x_mtx('./hg19/', var_names='gene_symbols', cache=True) 
+#pdmc = sc.read_10x_mtx('./hg19/', var_names='gene_symbols', cache=True) #pdmc = sc.datasets.pbmc3k()
 #scQC(pdmc, mtThreshold = 0.1, minLSize = 1000, a = 0.05, plot = True)
 
