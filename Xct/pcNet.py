@@ -11,23 +11,18 @@ def pcNet(X, nComp = 3, scale = True, symmetric = False, q = 0): # X: cell * gen
     else:
         n = X.shape[1] # genes
         def pcCoefficients(K):
-            if X is None:
-                raise ValueError('Input should be a matrix with cells as columns and genes as rows')
-            elif nComp < 2 or nComp >= n:
-                raise ValueError('nComp should be greater or equal than 2 and lower than the total number of genes')
-            else:
-                y = X[:, K] 
-                Xi = np.delete(X, K, 1)
-                U, s, VT = svd(Xi, full_matrices=False) 
-                #print ('U:', U.shape, 's:', s.shape, 'VT:', VT.shape)
-                V = VT[:nComp, :].T
-                #print('V:', V.shape)
+            y = X[:, K] 
+            Xi = np.delete(X, K, 1)
+            U, s, VT = svd(Xi, full_matrices=False) 
+            #print ('U:', U.shape, 's:', s.shape, 'VT:', VT.shape)
+            V = VT[:nComp, :].T
+            #print('V:', V.shape)
 
-                score = Xi@V
-                t = np.sqrt(np.sum(score**2, axis=0))
-                score_lsq = ((score.T / (t**2)[:, None])).T
-                beta = np.sum(y[:, None]*score_lsq, axis=0)
-                beta = V@beta
+            score = Xi@V
+            t = np.sqrt(np.sum(score**2, axis=0))
+            score_lsq = ((score.T / (t**2)[:, None])).T
+            beta = np.sum(y[:, None]*score_lsq, axis=0)
+            beta = V@beta
 
             return list(beta)
         
@@ -51,7 +46,5 @@ def pcNet(X, nComp = 3, scale = True, symmetric = False, q = 0): # X: cell * gen
         #diag(A) <- 0
         
         return A
-      
-      
       
       
