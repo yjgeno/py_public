@@ -4,7 +4,7 @@ from numpy.linalg import svd
 
 def pcNet(X, nComp = 3, scale = True, symmetric = False, q = 0): # X: cell * gene, q: 0-100
     if not isinstance(X, np.ndarray):
-        raise ValueError('Input should be a numpy array with cells as columns and genes as rows')
+        raise ValueError('Input should be a numpy array with cells as rows and genes as columns')
     elif nComp < 2 or nComp >= X.shape[1]:
         raise ValueError('nComp should be greater or equal than 2 and lower than the total number of genes')
     
