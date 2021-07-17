@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import scanpy as sc
 from anndata import AnnData
 import scipy
-from scipy.sparse import csr_matrix
 from scipy.optimize import least_squares
 import warnings
 warnings.filterwarnings("ignore")
@@ -59,7 +58,7 @@ class Xct_metrics():
 
 
     def get_metric(self, adata, verbose = False): #require normalized data
-        data_norm = csr_matrix.toarray(adata.X) if isinstance(adata.X, scipy.sparse.csr.csr_matrix) else adata.X#.copy()
+        data_norm = scipy.sparse.csr_matrix.toarray(adata.X) if scipy.sparse.issparse(adata.X) else adata.X
         if verbose:
             print('(cell, feature):', data_norm.shape)
         
