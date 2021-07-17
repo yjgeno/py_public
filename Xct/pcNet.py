@@ -1,8 +1,10 @@
 import numpy as np
 from numpy.linalg import svd
+from scipy.sparse import csr_matrix
 
 
 def pcNet(X, nComp = 3, scale = True, symmetric = False, q = 0): # X: cell * gene, q: 0-100
+    X = csr_matrix.toarray(X) if isinstance(X, scipy.sparse.csr.csr_matrix) else X
     if not isinstance(X, np.ndarray):
         raise ValueError('Input should be a numpy array with cells as rows and genes as columns')
     elif nComp < 2 or nComp >= X.shape[1]:
